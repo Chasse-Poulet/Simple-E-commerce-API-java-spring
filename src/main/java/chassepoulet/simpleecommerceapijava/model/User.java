@@ -23,6 +23,8 @@ public class User implements UserDetails {
     private String fullName;
     private Set<String> roles;
 
+    private Cart cart;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

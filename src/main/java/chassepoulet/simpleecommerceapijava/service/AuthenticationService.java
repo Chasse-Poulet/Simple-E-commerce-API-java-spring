@@ -1,7 +1,7 @@
 package chassepoulet.simpleecommerceapijava.service;
 
-import chassepoulet.simpleecommerceapijava.dto.LoginUserDto;
-import chassepoulet.simpleecommerceapijava.dto.RegisterUserDto;
+import chassepoulet.simpleecommerceapijava.dto.LoginUserDTO;
+import chassepoulet.simpleecommerceapijava.dto.RegisterUserDTO;
 import chassepoulet.simpleecommerceapijava.model.User;
 import chassepoulet.simpleecommerceapijava.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +23,7 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public User signup(RegisterUserDto input) {
+    public User signup(RegisterUserDTO input) {
         long userCount = userRepository.count();
 
         User user = new User();
@@ -38,7 +38,7 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
-    public User authenticate(LoginUserDto input) {
+    public User authenticate(LoginUserDTO input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getUsername(),

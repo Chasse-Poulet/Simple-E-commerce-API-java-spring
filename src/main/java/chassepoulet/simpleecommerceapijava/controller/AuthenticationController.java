@@ -1,8 +1,8 @@
 package chassepoulet.simpleecommerceapijava.controller;
 
-import chassepoulet.simpleecommerceapijava.dto.LoginResponseDto;
-import chassepoulet.simpleecommerceapijava.dto.LoginUserDto;
-import chassepoulet.simpleecommerceapijava.dto.RegisterUserDto;
+import chassepoulet.simpleecommerceapijava.dto.LoginResponseDTO;
+import chassepoulet.simpleecommerceapijava.dto.LoginUserDTO;
+import chassepoulet.simpleecommerceapijava.dto.RegisterUserDTO;
 import chassepoulet.simpleecommerceapijava.model.User;
 import chassepoulet.simpleecommerceapijava.security.JwtUtil;
 import chassepoulet.simpleecommerceapijava.service.AuthenticationService;
@@ -25,19 +25,19 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
 
         return ResponseEntity.ok(registeredUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> authenticate(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody LoginUserDTO loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        LoginResponseDto loginResponse = new LoginResponseDto();
+        LoginResponseDTO loginResponse = new LoginResponseDTO();
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
 

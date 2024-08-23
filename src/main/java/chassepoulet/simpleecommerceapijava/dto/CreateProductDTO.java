@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class UpdateProductDTO {
+public class CreateProductDTO {
 
     @NotBlank(message = "The product must have a name")
     private String name;

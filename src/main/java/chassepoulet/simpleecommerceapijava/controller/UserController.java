@@ -2,6 +2,7 @@ package chassepoulet.simpleecommerceapijava.controller;
 
 import chassepoulet.simpleecommerceapijava.model.User;
 import chassepoulet.simpleecommerceapijava.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UserController {
     private final UserService userService;
 

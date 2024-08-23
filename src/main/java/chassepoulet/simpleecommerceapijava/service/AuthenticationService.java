@@ -26,11 +26,8 @@ public class AuthenticationService {
     public User signup(RegisterUserDTO input) {
         long userCount = userRepository.count();
 
-        User user = new User();
-        user.setEmail(input.getEmail());
-        user.setUsername(input.getUsername());
+        User user = User.from(input);
         user.setPassword(bCryptPasswordEncoder.encode(input.getPassword()));
-        user.setFullName(input.getFullName());
 
         // The first user to sign up is the admin, then every user starts as a regular user
         user.setRoles(Set.of(userCount > 0 ? "ROLE_USER" : "ROLE_ADMIN"));

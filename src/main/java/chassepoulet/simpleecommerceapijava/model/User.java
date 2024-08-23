@@ -1,5 +1,6 @@
 package chassepoulet.simpleecommerceapijava.model;
 
+import chassepoulet.simpleecommerceapijava.dto.RegisterUserDTO;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,6 +25,15 @@ public class User implements UserDetails {
     private Set<String> roles;
 
     private Cart cart;
+
+    public static User from(RegisterUserDTO dto) {
+        User u = new User();
+        u.setEmail(dto.getEmail());
+        u.setPassword(dto.getPassword());
+        u.setUsername(dto.getUsername());
+        u.setFullName(dto.getFullName());
+        return u;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -88,6 +88,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Stripe -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>26.0.0</version>
+		</dependency>
+
 		<!-- OpenAPI Swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>

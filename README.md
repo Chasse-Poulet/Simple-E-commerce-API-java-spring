@@ -14,4 +14,8 @@ security.jwt.secret-key=YOUR_SECRET
 security.jwt.expiration-time=3600000
 # API docs
 springdoc.api-docs.path=/api-docs
+
+# Stripe
+stripe.api.key=YOUR_API_KEY
+stripe.endpoint.secret=YOUR_WEBHOOK_SECRET
 ```

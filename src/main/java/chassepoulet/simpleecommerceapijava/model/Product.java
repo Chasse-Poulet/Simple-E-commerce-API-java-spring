@@ -1,5 +1,6 @@
 package chassepoulet.simpleecommerceapijava.model;
 
+import chassepoulet.simpleecommerceapijava.dto.CreateProductDTO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,4 +22,12 @@ public class Product {
     @NotNull(message = "The product must have a price")
     @Min(value = 0, message = "The price can't be negative")
     private Double price;
+
+    public static Product from(CreateProductDTO dto) {
+        Product p = new Product();
+        p.setName(dto.getName());
+        p.setDescription(dto.getDescription());
+        p.setPrice(dto.getPrice());
+        return p;
+    }
 }

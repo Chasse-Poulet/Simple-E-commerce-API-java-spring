@@ -1,8 +1,10 @@
 package chassepoulet.simpleecommerceapijava.controller;
 
+import chassepoulet.simpleecommerceapijava.dto.CreateProductDTO;
 import chassepoulet.simpleecommerceapijava.dto.UpdateProductDTO;
 import chassepoulet.simpleecommerceapijava.model.Product;
 import chassepoulet.simpleecommerceapijava.service.ProductService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,18 +31,21 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Product createProduct(@Valid @RequestBody Product product) {
-        return productService.createProduct(product);
+    @SecurityRequirement(name = "Bearer Authentication")
+    public Product createProduct(@Valid @RequestBody CreateProductDTO createProduct) {
+        return productService.createProduct(Product.from(createProduct));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Product updateProduct(@PathVariable String id, @RequestBody UpdateProductDTO updatedProduct) {
+    @SecurityRequirement(name = "Bearer Authentication")
+    public Product updateProduct(@PathVariable String id, @Valid @RequestBody UpdateProductDTO updatedProduct) {
         return productService.updateProduct(id, updatedProduct);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public void deleteProductById(@PathVariable String id) {
         productService.deleteProductById(id);
     }

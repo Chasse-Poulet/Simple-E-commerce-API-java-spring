@@ -22,6 +22,10 @@ public class CartService {
         });
     }
 
+    public void saveCart(Cart cart) {
+        cartRepository.save(cart);
+    }
+
     public Cart addProductToCart(String userId, String productId, int quantity) {
         Cart cart = getCartByUserId(userId);
 
@@ -49,5 +53,14 @@ public class CartService {
         cart.getItems().removeIf(item -> item.getProductId().equals(productId));
 
         return cartRepository.save(cart);
+    }
+
+    public Cart getCartByPaymentIntentIdAndEmpty(String paymentIntentId) {
+        Cart cart = cartRepository.findByPaymentIntentId(paymentIntentId).orElse(null);
+        if(cart != null) {
+            cart.getItems().clear();
+            cartRepository.save(cart);
+        }
+        return cart;
     }
 }

@@ -31,9 +31,22 @@ public class ProductService {
     public Product updateProduct(String id, UpdateProductDTO updatedProduct) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
-                    existingProduct.setName(updatedProduct.getName());
-                    existingProduct.setDescription(updatedProduct.getDescription());
-                    existingProduct.setPrice(updatedProduct.getPrice());
+                    String name = updatedProduct.getName();
+                    String description = updatedProduct.getDescription();
+                    Double price = updatedProduct.getPrice();
+
+                    if(name != null) {
+                        existingProduct.setName(updatedProduct.getName());
+                    }
+
+                    if(description != null) {
+                        existingProduct.setDescription(updatedProduct.getDescription());
+                    }
+
+                    if(price != null) {
+                        existingProduct.setPrice(updatedProduct.getPrice());
+                    }
+
                     return productRepository.save(existingProduct);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(id));

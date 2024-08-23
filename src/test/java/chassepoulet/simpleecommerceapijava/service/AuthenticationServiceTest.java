@@ -37,7 +37,7 @@ public class AuthenticationServiceTest {
     }
 
     @Test
-    void signup() {
+    void testSignup() {
         String password = "iamtheflash";
         String encodedPassword = "iamtheflashencoded";
 
@@ -62,7 +62,7 @@ public class AuthenticationServiceTest {
     }
 
     @Test
-    void login() {
+    void testLogin() {
         String password = "iamtheflash";
         String encodedPassword = "iamtheflashencoded";
 

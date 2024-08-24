@@ -9,9 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.*;
 
 public class ProductServiceTest {
@@ -37,11 +39,15 @@ public class ProductServiceTest {
         pen.setName("Pen");
         pen.setPrice(1.99);
 
-        when(productRepository.findAll()).thenReturn(Arrays.asList(book, pen));
+        List<Product> products = List.of(book, pen);
 
-        productService.getAllProducts();
+        when(productRepository.findAll()).thenReturn(products);
+
+        List<Product> result = productService.getAllProducts();
 
         verify(productRepository).findAll();
+
+        assertIterableEquals(products, result);
     }
 
     @Test
@@ -57,9 +63,11 @@ public class ProductServiceTest {
 
         when(productRepository.findById(id)).thenReturn(op);
 
-        productService.getProductById(id);
+        Product result = productService.getProductById(id);
 
         verify(productRepository).findById(id);
+
+        assertEquals(book, result);
     }
 
     @Test
@@ -70,9 +78,11 @@ public class ProductServiceTest {
 
         when(productRepository.save(book)).thenReturn(book);
 
-        productService.createProduct(book);
+        Product result = productService.createProduct(book);
 
         verify(productRepository).save(book);
+
+        assertEquals(book, result);
     }
 
     @Test
@@ -97,10 +107,12 @@ public class ProductServiceTest {
         when(productRepository.findById(id)).thenReturn(op);
         when(productRepository.save(book)).thenReturn(updatedBook);
 
-        productService.updateProduct(id, dto);
+        Product result = productService.updateProduct(id, dto);
 
         verify(productRepository).findById(id);
         verify(productRepository).save(book);
+
+        assertEquals(updatedBook, result);
     }
 
     @Test

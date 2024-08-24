@@ -36,7 +36,7 @@ public class StripeWebhookController {
 
                 if (paymentIntent != null) {
                     String paymentIntentId = paymentIntent.getId();
-                    Order order = orderService.getProductByPaymentIntentIdAndPay(paymentIntentId);
+                    Order order = orderService.getOrderByPaymentIntentIdAndPay(paymentIntentId);
                     Cart cart = cartService.getCartByPaymentIntentIdAndEmpty(paymentIntentId);
                 }
             }

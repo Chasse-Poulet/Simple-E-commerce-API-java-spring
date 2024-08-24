@@ -7,9 +7,10 @@ import chassepoulet.simpleecommerceapijava.repository.OrderRepository;
 import chassepoulet.simpleecommerceapijava.repository.ProductRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -18,10 +19,17 @@ public class OrderService {
     private CartService cartService;
 
     @Autowired
+    private StripeService stripeService;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
+
+    public List<Order> getAllOrdersByUserId(String userId) {
+        return orderRepository.findAllByUserId(userId);
+    }
 
     public String createOrder(String userId) throws StripeException {
         Cart cart = cartService.getCartByUserId(userId);
@@ -30,12 +38,7 @@ public class OrderService {
                 .mapToDouble(item -> item.getQuantity() * getProductPrice(item.getProductId()))
                 .sum();
 
-        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                .setAmount((long) totalAmount * 100)
-                .setCurrency("eur")
-                .build();
-
-        PaymentIntent paymentIntent = PaymentIntent.create(params);
+        PaymentIntent paymentIntent = stripeService.createPaymentIntent(totalAmount);
 
         Order order = new Order();
         order.setUserId(userId);
@@ -52,7 +55,7 @@ public class OrderService {
         return paymentIntent.getId();
     }
 
-    public Order getProductByPaymentIntentIdAndPay(String paymentIntentId) {
+    public Order getOrderByPaymentIntentIdAndPay(String paymentIntentId) {
         Order order = orderRepository.findByPaymentIntentId(paymentIntentId).orElse(null);
         if (order != null) {
             order.setStatus("PAID");

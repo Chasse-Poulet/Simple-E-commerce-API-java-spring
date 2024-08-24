@@ -8,8 +8,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
@@ -33,10 +35,14 @@ public class UserServiceTest {
         User batman = new User();
         batman.setUsername("Batman");
 
-        when(userRepository.findAll()).thenReturn(Arrays.asList(flash, batman));
+        List<User> users = List.of(flash, batman);
 
-        userService.allUsers();
+        when(userRepository.findAll()).thenReturn(users);
+
+        List<User> result = userService.allUsers();
 
         verify(userRepository).findAll();
+
+        assertIterableEquals(users, result);
     }
 }

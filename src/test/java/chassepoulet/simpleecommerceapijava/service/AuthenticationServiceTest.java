@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class AuthenticationServiceTest {
@@ -56,9 +57,12 @@ public class AuthenticationServiceTest {
         when(userRepository.count()).thenReturn(0L);
 
         User result = authenticationService.signup(registerUserDTO);
+
         verify(userRepository).count();
         verify(bCryptPasswordEncoder).encode(password);
         verify(userRepository).save(user);
+
+        assertEquals(user, result);
     }
 
     @Test
@@ -81,8 +85,10 @@ public class AuthenticationServiceTest {
 
         when(userRepository.findByUsername(dto.getUsername())).thenReturn(ou);
 
-        authenticationService.authenticate(dto);
+        User result = authenticationService.authenticate(dto);
 
         verify(userRepository).findByUsername(dto.getUsername());
+
+        assertEquals(user, result);
     }
 }

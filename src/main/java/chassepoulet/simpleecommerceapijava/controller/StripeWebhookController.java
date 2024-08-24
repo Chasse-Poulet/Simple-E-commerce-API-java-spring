@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class StripeWebhookController {
 
     @Value("${stripe.endpoint.secret}")
-    private static String ENDPOINT_SECRET;
+    private String ENDPOINT_SECRET;
 
     @Autowired
     private OrderService orderService;

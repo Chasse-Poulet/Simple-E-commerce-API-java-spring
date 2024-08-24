@@ -3,7 +3,6 @@ package chassepoulet.simpleecommerceapijava.service;
 import chassepoulet.simpleecommerceapijava.exception.ProductNotFoundException;
 import chassepoulet.simpleecommerceapijava.model.Cart;
 import chassepoulet.simpleecommerceapijava.model.Order;
-import chassepoulet.simpleecommerceapijava.model.Product;
 import chassepoulet.simpleecommerceapijava.repository.OrderRepository;
 import chassepoulet.simpleecommerceapijava.repository.ProductRepository;
 import com.stripe.exception.StripeException;

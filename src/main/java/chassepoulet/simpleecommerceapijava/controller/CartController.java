@@ -3,7 +3,6 @@ package chassepoulet.simpleecommerceapijava.controller;
 import chassepoulet.simpleecommerceapijava.dto.AddProductToCartDTO;
 import chassepoulet.simpleecommerceapijava.dto.RemoveProductFromCartDTO;
 import chassepoulet.simpleecommerceapijava.model.Cart;
-import chassepoulet.simpleecommerceapijava.model.Order;
 import chassepoulet.simpleecommerceapijava.service.CartService;
 import chassepoulet.simpleecommerceapijava.service.OrderService;
 import com.stripe.exception.StripeException;

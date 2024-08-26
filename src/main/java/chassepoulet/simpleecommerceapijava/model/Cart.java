@@ -13,7 +13,5 @@ public class Cart {
     @Id
     private String id;
 
-    private String paymentIntentId;
-
     private List<CartItem> items = new ArrayList<>();
 }

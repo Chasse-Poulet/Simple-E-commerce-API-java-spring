@@ -25,4 +25,10 @@ public class OrderController {
     public List<Order> getAllOrders(@PathVariable String userId) {
         return orderService.getAllOrdersByUserId(userId);
     }
+
+    @GetMapping("/{orderId}")
+    @PreAuthorize("#userId == principal.id")
+    public Order getOrder(@PathVariable String userId, @PathVariable String orderId) {
+        return orderService.getOrder(userId, orderId);
+    }
 }

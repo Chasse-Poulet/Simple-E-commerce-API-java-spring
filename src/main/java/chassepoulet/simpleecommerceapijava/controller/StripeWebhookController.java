@@ -1,8 +1,6 @@
 package chassepoulet.simpleecommerceapijava.controller;
 
-import chassepoulet.simpleecommerceapijava.model.Cart;
 import chassepoulet.simpleecommerceapijava.model.Order;
-import chassepoulet.simpleecommerceapijava.service.CartService;
 import chassepoulet.simpleecommerceapijava.service.OrderService;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
@@ -22,9 +20,6 @@ public class StripeWebhookController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private CartService cartService;
-
     @PostMapping("/webhook")
     public void handleWebhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) throws Exception {
 
@@ -36,8 +31,8 @@ public class StripeWebhookController {
 
                 if (paymentIntent != null) {
                     String paymentIntentId = paymentIntent.getId();
-                    Order order = orderService.getOrderByPaymentIntentIdAndPay(paymentIntentId);
-                    Cart cart = cartService.getCartByPaymentIntentIdAndEmpty(paymentIntentId);
+                    String paymentIntentStatus = paymentIntent.getStatus();
+                    orderService.getOrderByPaymentIntentIdAndUpdatePaymentStatus(paymentIntentId, paymentIntentStatus);
                 }
             }
         } catch (SignatureVerificationException e) {

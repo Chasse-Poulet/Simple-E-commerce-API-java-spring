@@ -2,7 +2,9 @@ package chassepoulet.simpleecommerceapijava.service;
 
 import chassepoulet.simpleecommerceapijava.model.Cart;
 import chassepoulet.simpleecommerceapijava.model.CartItem;
+import chassepoulet.simpleecommerceapijava.model.User;
 import chassepoulet.simpleecommerceapijava.repository.CartRepository;
+import chassepoulet.simpleecommerceapijava.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,22 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public Cart getCartByUserId(String userId) {
         return cartRepository.findById(userId).orElseGet(() -> {
             Cart cart = new Cart();
             cart.setId(userId);
-            return cartRepository.save(cart);
+
+            cartRepository.save(cart);
+
+            User user = userRepository.findById(userId).orElseThrow();
+            user.setCart(cart);
+
+            userRepository.save(user);
+
+            return cart;
         });
     }
 
@@ -55,12 +68,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    public Cart getCartByPaymentIntentIdAndEmpty(String paymentIntentId) {
-        Cart cart = cartRepository.findByPaymentIntentId(paymentIntentId).orElse(null);
-        if(cart != null) {
-            cart.getItems().clear();
-            cartRepository.save(cart);
-        }
-        return cart;
+    public void deleteCartByUserId(String userId) {
+        cartRepository.deleteById(userId);
     }
 }

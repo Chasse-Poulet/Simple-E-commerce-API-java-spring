@@ -3,7 +3,9 @@ package chassepoulet.simpleecommerceapijava.service;
 import chassepoulet.simpleecommerceapijava.exception.ProductNotFoundException;
 import chassepoulet.simpleecommerceapijava.model.Cart;
 import chassepoulet.simpleecommerceapijava.model.Order;
+import chassepoulet.simpleecommerceapijava.model.Payment;
 import chassepoulet.simpleecommerceapijava.repository.OrderRepository;
+import chassepoulet.simpleecommerceapijava.repository.PaymentRepository;
 import chassepoulet.simpleecommerceapijava.repository.ProductRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -27,8 +29,15 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private PaymentRepository paymentRepository;
+
     public List<Order> getAllOrdersByUserId(String userId) {
         return orderRepository.findAllByUserId(userId);
+    }
+
+    public Order getOrder(String userId, String orderId) {
+        return orderRepository.findByUserIdAndId(userId, orderId).orElse(null);
     }
 
     public String createOrder(String userId) throws StripeException {
@@ -39,29 +48,35 @@ public class OrderService {
                 .sum();
 
         PaymentIntent paymentIntent = stripeService.createPaymentIntent(totalAmount);
+        String paymentIntentId = paymentIntent.getId();
+
+        Payment payment = new Payment();
+        payment.setPaymentIntentId(paymentIntentId);
+        payment.setStatus(paymentIntent.getStatus());
+
+        paymentRepository.save(payment);
 
         Order order = new Order();
         order.setUserId(userId);
-        order.setPaymentIntentId(paymentIntent.getId());
+        order.setPayment(payment);
         order.setItems(cart.getItems());
         order.setTotalAmount(totalAmount);
         order.setStatus("PENDING");
-
-        cart.setPaymentIntentId(paymentIntent.getId());
+        order.setCurrency("eur");
 
         orderRepository.save(order);
-        cartService.saveCart(cart);
 
         return paymentIntent.getId();
     }
 
-    public Order getOrderByPaymentIntentIdAndPay(String paymentIntentId) {
-        Order order = orderRepository.findByPaymentIntentId(paymentIntentId).orElse(null);
+    public void getOrderByPaymentIntentIdAndUpdatePaymentStatus(String paymentIntentId, String paymentIntentStatus) {
+        Order order = orderRepository.findByPaymentPaymentIntentId(paymentIntentId).orElse(null);
         if (order != null) {
             order.setStatus("PAID");
+            order.getPayment().setStatus(paymentIntentStatus);
             orderRepository.save(order);
+            cartService.deleteCartByUserId(order.getUserId());
         }
-        return order;
     }
 
     private double getProductPrice(String productId) {

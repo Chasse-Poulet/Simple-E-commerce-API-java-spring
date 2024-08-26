@@ -3,6 +3,7 @@ package chassepoulet.simpleecommerceapijava.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
 
@@ -13,8 +14,11 @@ public class Order {
     private String id;
 
     private String userId;
-    private String paymentIntentId;
-    private List<CartItem> items;
-    private double totalAmount;
     private String status;
+    private String currency;
+    private double totalAmount;
+    private List<CartItem> items;
+
+    @DocumentReference
+    private Payment payment;
 }

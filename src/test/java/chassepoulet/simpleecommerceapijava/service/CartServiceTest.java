@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CartServiceTest {
 
@@ -133,39 +132,13 @@ public class CartServiceTest {
     }
 
     @Test
-    void testGetCartByPaymentIntentIdAndEmpty() {
+    void testDeleteCartByUserId() {
         String userId = "id1234";
-        String productId = "book1234";
-        String paymentIntentId = "pi1234";
 
-        Product book = new Product();
-        book.setId(productId);
-        book.setName("Book");
-        book.setPrice(9.99);
+        doNothing().when(cartRepository).deleteById(userId);
 
-        CartItem bookItem = new CartItem();
-        bookItem.setProductId(productId);
-        bookItem.setQuantity(2);
+        cartService.deleteCartByUserId(userId);
 
-        Cart cart = new Cart();
-        cart.setId(userId);
-        cart.setPaymentIntentId(paymentIntentId);
-        cart.setItems(new ArrayList<>(List.of(bookItem)));
-
-        Cart updatedCart = new Cart();
-        updatedCart.setId(userId);
-        updatedCart.setPaymentIntentId(paymentIntentId);
-
-        Optional<Cart> oc = Optional.of(cart);
-
-        when(cartRepository.findByPaymentIntentId(paymentIntentId)).thenReturn(oc);
-        when(cartRepository.save(updatedCart)).thenReturn(updatedCart);
-
-        Cart result = cartService.getCartByPaymentIntentIdAndEmpty(paymentIntentId);
-
-        verify(cartRepository).findByPaymentIntentId(paymentIntentId);
-        verify(cartRepository).save(updatedCart);
-
-        assertEquals(updatedCart, result);
+        verify(cartRepository).deleteById(userId);
     }
 }

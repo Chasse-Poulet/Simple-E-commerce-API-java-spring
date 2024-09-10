@@ -1,9 +1,6 @@
 package chassepoulet.simpleecommerceapijava.service;
 
-import chassepoulet.simpleecommerceapijava.model.Cart;
-import chassepoulet.simpleecommerceapijava.model.CartItem;
-import chassepoulet.simpleecommerceapijava.model.Order;
-import chassepoulet.simpleecommerceapijava.model.Product;
+import chassepoulet.simpleecommerceapijava.model.*;
 import chassepoulet.simpleecommerceapijava.repository.OrderRepository;
 import chassepoulet.simpleecommerceapijava.repository.ProductRepository;
 import com.stripe.exception.StripeException;
@@ -68,6 +65,25 @@ public class OrderServiceTest {
     }
 
     @Test
+    void testGetOrder() {
+        String userId = "id1234";
+        String orderId = "order1234";
+
+        Order order = new Order();
+        order.setId(orderId);
+
+        Optional<Order> oo = Optional.of(order);
+
+        when(orderRepository.findByUserIdAndId(userId, orderId)).thenReturn(oo);
+
+        Order result = orderService.getOrder(userId, orderId);
+
+        verify(orderRepository).findByUserIdAndId(userId, orderId);
+
+        assertEquals(order, result);
+    }
+
+    @Test
     void testCreateOrder() {
         String userId = "id1234";
         String productId = "book1234";
@@ -89,14 +105,17 @@ public class OrderServiceTest {
 
         Cart cart = new Cart();
         cart.setId(userId);
-        cart.setPaymentIntentId(paymentIntentId);
         cart.setItems(new ArrayList<>(List.of(bookItem)));
 
         double totalAmount = book.getPrice() * bookItem.getQuantity();
 
+        Payment payment = new Payment();
+        payment.setPaymentIntentId(paymentIntentId);
+        payment.setStatus("PENDING");
+
         Order order = new Order();
         order.setUserId(userId);
-        order.setPaymentIntentId(paymentIntentId);
+        order.setPayment(payment);
         order.setItems(cart.getItems());
         order.setTotalAmount(totalAmount);
         order.setStatus("PENDING");
@@ -123,29 +142,39 @@ public class OrderServiceTest {
     }
 
     @Test
-    void testGetProductByPaymentIntentIdAndPay() {
+    void testGetOrderByPaymentIntentIdAndUpdatePaymentStatus() {
         String orderId = "order1234";
         String paymentIntentId = "pi1234";
+
+        Payment payment = new Payment();
+        payment.setPaymentIntentId(paymentIntentId);
+        payment.setStatus("PENDING");
+
+        Payment updatedPayment = new Payment();
+        updatedPayment.setPaymentIntentId(paymentIntentId);
+        updatedPayment.setStatus("PAID");
 
         Order order = new Order();
         order.setId(orderId);
         order.setStatus("PENDING");
-        order.setPaymentIntentId(paymentIntentId);
+        order.setPayment(payment);
 
         Order updatedOrder = new Order();
         updatedOrder.setId(orderId);
         updatedOrder.setStatus("PAID");
-        updatedOrder.setPaymentIntentId(paymentIntentId);
+        updatedOrder.setPayment(updatedPayment);
 
         Optional<Order> oo = Optional.of(order);
 
-        when(orderRepository.findByPaymentIntentId(paymentIntentId)).thenReturn(oo);
+        when(orderRepository.findByPaymentPaymentIntentId(paymentIntentId)).thenReturn(oo);
         when(orderRepository.save(updatedOrder)).thenReturn(updatedOrder);
+        doNothing().when(cartService).deleteCartByUserId(order.getUserId());
 
-        Order result = orderService.getOrderByPaymentIntentIdAndPay(paymentIntentId);
+        orderService.getOrderByPaymentIntentIdAndUpdatePaymentStatus(paymentIntentId, updatedPayment.getStatus());
 
-        verify(orderRepository).findByPaymentIntentId(paymentIntentId);
+        verify(orderRepository).findByPaymentPaymentIntentId(paymentIntentId);
         verify(orderRepository).save(updatedOrder);
+        verify(cartService).deleteCartByUserId(order.getUserId());
 
         assertEquals(updatedOrder, order);
     }
